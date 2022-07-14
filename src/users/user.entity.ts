@@ -4,8 +4,10 @@ import { AfterInsert, Column, Entity, PrimaryGeneratedColumn, Unique } from "typ
 export class User{
     @PrimaryGeneratedColumn()
     id: number;
+
     @Column()
     email:string;
+
     @Column()
     password:string;
 
