@@ -1,6 +1,8 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, Post, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Patch, Post, Session, UseGuards, UseInterceptors } from '@nestjs/common';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { Serialize, SerializeInterceptor } from 'src/interceptors/serialize.interceptor';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { createUserDto } from './dtos/create-user.dto';
 import { updateUserDto } from './dtos/update-user.dto';
 import { UserDto } from './dtos/user.dto';
@@ -13,18 +15,29 @@ export class UsersController {
         private authService: AuthService,
     ){}
     @Post("/signup")
-    createUser(@Body() user: createUserDto){
+    async createUser(@Body() user: createUserDto, @Session() session: any){
         // console.log(user);
-        return this.authService.signup(user.email, user.password)
+        const userData = await this.authService.signup(user.email, user.password)
+        session.userId = userData.id;
+        return userData;
     }
     @Post("/signin")
-    signIn(@Body() user: createUserDto){
+    async signIn(@Body() user: createUserDto, @Session() session: any){
         // console.log(user);
-        return this.authService.signin(user.email, user.password)
+        // console.log(session)
+        const userData = await this.authService.signin(user.email, user.password)
+        session.userId = userData.id;
+        return userData
     }
-    @Serialize(UserDto)
+    @Post("/signout")
+    async signOut(@Session() session: any){
+        session.userId = null;
+    }
+    @UseGuards(AuthGuard)
+    @Serialize(UserDto) // interceptor that modifies outgoing data
     @Get("/findById/:id")
-    findOne(@Param("id") id:number){
+    findOne(@Param("id") id:number, @CurrentUser() user: any){
+        console.log(user)
         return this.userService.findOne(id)
     }
     @Get("/findByEmail/:email")

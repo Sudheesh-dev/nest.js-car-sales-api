@@ -14,10 +14,11 @@ export class SerializeInterceptor<T> implements NestInterceptor{
     constructor(private dto:T | any){}
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
         // console.log(context);
+        // context is the incoming http, ws, grpc request
         return next.handle().pipe(
             map((data:T)=>{
                 return plainToInstance(this.dto, data, {
-                    excludeExtraneousValues: true
+                    excludeExtraneousValues: true // removes all the prop not on dto(@Expose)
                 })
             })
         )

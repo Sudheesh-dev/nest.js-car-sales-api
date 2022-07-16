@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -16,6 +16,7 @@ export class UsersService {
         return this.repo.save(user);
     }
     findOne(id:number){
+        if(!id) throw new NotFoundException("not found")
         return this.repo.findOne({
             where: {
                 id: id,
