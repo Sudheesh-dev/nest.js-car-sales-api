@@ -16,15 +16,12 @@ export class UsersController {
     ){}
     @Post("/signup")
     async createUser(@Body() user: createUserDto, @Session() session: any){
-        // console.log(user);
         const userData = await this.authService.signup(user.email, user.password)
         session.userId = userData.id;
         return userData;
     }
     @Post("/signin")
     async signIn(@Body() user: createUserDto, @Session() session: any){
-        // console.log(user);
-        // console.log(session)
         const userData = await this.authService.signin(user.email, user.password)
         session.userId = userData.id;
         return userData
