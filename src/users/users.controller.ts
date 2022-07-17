@@ -34,7 +34,7 @@ export class UsersController {
     @Serialize(UserDto) // interceptor that modifies outgoing data
     @Get("/findById/:id")
     findOne(@Param("id") id:number, @CurrentUser() user: any){
-        console.log(user)
+        console.log(user, id)
         return this.userService.findOne(id)
     }
     @Get("/findByEmail/:email")

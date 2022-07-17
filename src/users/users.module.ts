@@ -13,10 +13,12 @@ import { UsersService } from './users.service';
   providers: [
     UsersService,
     AuthService,
-    {
-      provide : APP_INTERCEPTOR,
-      useClass: CurrentUserInterceptor
-    }
-  ]
+    // {
+    //   provide : APP_INTERCEPTOR,
+    //   useClass: CurrentUserInterceptor
+    // }
+  ],
+  exports:[UsersService]
 })
 export class UsersModule {}
+
